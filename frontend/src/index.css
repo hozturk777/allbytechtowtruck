@@ -1,0 +1,362 @@
+@import 'tailwindcss';
+
+/*
+ * Yön: "teknik pafta". Açık kâğıt zemin, ince ölçü çizgileri, kesim işaretleri,
+ * ikaz sarısı yalnızca vurgu/fosforlu kalem olarak.
+ * Fontlar sitede geçen karakterlere göre küçültülmüştür (pyftsubset): Latin dosyası
+ * ASCII + Latin-1 + ı + tipografik işaretler; ek dosya yalnız ğ Ğ ş Ş İ ₺.
+ * Yeni bir karakter (ör. başka dil) gerekirse kaynak fontlardan yeniden alt küme üret.
+ * Archivo, genişlik ekseni 112'de sabitlenmiş örnektir (ağırlık 500–900 değişken).
+ */
+@font-face {
+  font-family: 'Archivo Wide';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500 900;
+  src: url('./assets/fonts/archivo-latin-ext-wide.woff2') format('woff2');
+  unicode-range: U+011E-011F, U+0130, U+015E-015F, U+20BA;
+}
+@font-face {
+  font-family: 'Archivo Wide';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500 900;
+  src: url('./assets/fonts/archivo-latin-wide.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+2013-2014, U+2018-201E, U+2022, U+2026,
+    U+2032-2033, U+20AC, U+2122, U+2191, U+2193, U+2212;
+}
+@font-face {
+  font-family: 'Atkinson Next';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('./assets/fonts/atkinson-hyperlegible-next-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+011E-011F, U+0130, U+015E-015F, U+20BA;
+}
+@font-face {
+  font-family: 'Atkinson Next';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('./assets/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+2013-2014, U+2018-201E, U+2022, U+2026,
+    U+2032-2033, U+20AC, U+2122, U+2191, U+2193, U+2212;
+}
+
+@theme {
+  --font-display: 'Archivo Wide', 'Arial', sans-serif;
+  --font-sans: 'Atkinson Next', ui-sans-serif, system-ui, sans-serif;
+
+  /* Kâğıt */
+  --color-paper: #f3f2ee;
+  --color-paper-2: #e9e7e1;
+  --color-card: #fbfaf8;
+  --color-rule: #d6d3cb;
+  /* Mürekkep */
+  --color-ink: #16191d;
+  --color-ink-2: #2b3036;
+  --color-muted: #565c64;
+  /* İkaz sarısı (yalnızca dolgu/vurgu; açık zeminde yazı rengi olarak kullanılmaz) */
+  --color-signal: #ffc400;
+  --color-signal-soft: #ffe58a;
+  /* Levha renkleri */
+  --color-otoyol: #0b6b3a;
+  --color-devlet: #1e5ba8;
+  --color-sea: #dce5e8;
+  /* WhatsApp */
+  --color-wa: #25d366;
+  --color-wa-deep: #1a9e4b;
+  --color-wa-ink: #072a14;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-paper);
+    min-height: 100vh;
+  }
+  section[id] {
+    scroll-margin-top: 72px;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-ink);
+  }
+}
+
+/* Milimetrik pafta ızgarası */
+@utility paper-grid {
+  background-image:
+    linear-gradient(rgb(22 25 29 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(22 25 29 / 0.055) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+@utility hazard-sm {
+  background-image: repeating-linear-gradient(-45deg, var(--color-signal) 0 4px, var(--color-ink) 4px 8px);
+}
+/* Galeri: kareyi örten sarı kepenk, alt kenarında ikaz şeridi */
+@utility hazard-shutter {
+  background:
+    repeating-linear-gradient(-45deg, var(--color-signal) 0 9px, var(--color-ink) 9px 18px) bottom / 100% 10px no-repeat,
+    var(--color-signal);
+}
+/* Şerit hâlinde ikaz bandı (footer üst kenarı) */
+@utility hazard-tape {
+  background-image: repeating-linear-gradient(-45deg, var(--color-signal) 0 14px, var(--color-ink) 14px 28px);
+}
+/* Fosforlu kalem altı çizgisi */
+@utility marker {
+  background-image: linear-gradient(var(--color-signal), var(--color-signal));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 0.42em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ---------- Hero: JS beklemeden çalışan CSS animasyonları ---------- */
+
+/* Fosforlu kalem soldan sağa çekilir */
+@keyframes marker-sweep {
+  from { background-size: 0% 0.42em; }
+  to { background-size: 100% 0.42em; }
+}
+.marker-sweep {
+  animation: marker-sweep 0.9s var(--ease-out-soft) 0.35s both;
+}
+
+/* Çizgi kendini çizer: öğede pathLength="1" olmalı */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.4s var(--ease-out-soft) var(--d, 0s) forwards;
+}
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+.fill-in {
+  opacity: 0;
+  animation: fade-in 0.7s ease var(--d, 1.2s) forwards;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 0.8s linear infinite;
+}
+/* Yol çizgileri akar → araç gidiyormuş gibi */
+@keyframes road {
+  to { stroke-dashoffset: -52; }
+}
+.road {
+  animation: road 0.55s linear infinite;
+}
+@keyframes speed {
+  0% { transform: translateX(30px); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateX(-60px); opacity: 0; }
+}
+.speed {
+  animation: speed 0.9s linear var(--d, 0s) infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+.blink {
+  animation: blink 0.9s steps(2, jump-none) infinite;
+}
+/* Gövde hafifçe yaylanır */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+.bob {
+  animation: bob 0.45s ease-in-out infinite;
+}
+@keyframes beacon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.beacon {
+  animation: beacon 1.6s ease-in-out infinite;
+}
+/* Arama butonundaki yayılan halka */
+@keyframes ring {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+.ring-pulse {
+  animation: ring 1.8s var(--ease-out-soft) infinite;
+}
+
+/* Kayan bölge şeridi */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  animation: marquee 38s linear infinite;
+}
+
+/* "Nasıl çalışır" mini ikon döngüleri */
+@keyframes wiggle {
+  0%, 60%, 100% { transform: rotate(0); }
+  65% { transform: rotate(-14deg); }
+  72% { transform: rotate(12deg); }
+  79% { transform: rotate(-8deg); }
+  86% { transform: rotate(5deg); }
+}
+.wiggle {
+  transform-origin: 50% 60%;
+  animation: wiggle 2.4s ease-in-out infinite;
+}
+@keyframes drop {
+  0%, 55%, 100% { transform: translateY(0); }
+  70% { transform: translateY(-7px); }
+  82% { transform: translateY(0); }
+  88% { transform: translateY(-2px); }
+}
+.drop {
+  animation: drop 2.4s ease-in-out infinite;
+}
+@keyframes drive {
+  0%, 100% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+}
+.drive {
+  animation: drive 1.2s ease-in-out infinite;
+}
+
+/* Harita: merkezden yayılan menzil halkası */
+@keyframes radar {
+  0% { transform: scale(0.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.radar {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radar 2.8s var(--ease-out-soft) var(--d, 0s) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Sürekli döngüler tamamen dursun */
+  .marquee, .wheel, .road, .speed, .bob, .blink, .ring-pulse, .wiggle, .drop, .drive, .radar {
+    animation: none !important;
+  }
+  .speed, .ring-pulse, .radar {
+    opacity: 0 !important;
+  }
+}
+
+/* ---------- Kaydırmaya bağlı hero sahnesi ---------- */
+/* Boy svh/dvh ile değil, açılışta ölçülen sabit --vh (px) ile (bkz. lib/stableViewport.ts) */
+:root {
+  --vh: 100vh;
+  --bars: 0px;
+}
+/*
+ * Sahne uzunluğu 5 sn / 120 karelik klibe göre: sticky kaydırma mesafesi
+ * (--scene-len − 1) ekran. Masaüstünde 1,6 ekran ≈ kare başına ~12 px (fare tıkı
+ * ~100 px ≈ 8 kare); dokunmatikte 1,6 kat (yerel kaydırma hızlı) ≈ kare başına
+ * ~20 px, bir–iki savuruşta geçilir. Klip uzarsa bu değerleri orantılı büyüt.
+ */
+.scene {
+  --scene-len: 2.6;
+  height: calc(var(--vh) * var(--scene-len));
+}
+@media (pointer: coarse) {
+  .scene { --scene-len: 3.9; }
+}
+.scene__sticky {
+  height: var(--vh);
+}
+.scene__shade {
+  background:
+    linear-gradient(90deg, var(--color-paper) 0%, rgb(243 242 238 / 0.92) 28%, rgb(243 242 238 / 0.7) 38%, rgb(243 242 238 / 0.38) 48%, rgb(243 242 238 / 0.14) 56%, rgb(243 242 238 / 0) 64%),
+    linear-gradient(0deg, var(--color-paper) 0%, rgb(243 242 238 / 0.6) 5%, rgb(243 242 238 / 0.22) 10%, rgb(243 242 238 / 0) 16%);
+}
+@media (max-width: 767px) {
+  /* Dikey ekranda görüntü üst bölümde; metin altta kâğıt zeminde */
+  /* kısa ekranlarda metne en az 380px kalsın: görüntü metnin altına girmesin */
+  /* üstten tam taşar: header gizlenince boşluk kalmaz, görünürken üstüne biner */
+  /*
+   * Alt kenar beyaz bir katmanla örtülmez, görüntünün kendisi maskeyle saydamlaşır:
+   * 3B dönüşümlü poster/canvas ayrı katmanda çizildiği için örtü ile kenarı piksel
+   * piksel hizalanmıyor, son satır ince gri çizgi olarak görünüyordu. Kenar burada
+   * tamamen saydam; altındaki sayfa rengi görünür.
+   */
+  .scene__media {
+    bottom: max(38%, 380px);
+    top: 0;
+    background: transparent;
+    -webkit-mask-image: linear-gradient(0deg, transparent 0%, transparent 3%, rgb(0 0 0 / 0.25) 9%, rgb(0 0 0 / 0.5) 15%, rgb(0 0 0 / 0.75) 22%, rgb(0 0 0 / 0.92) 29%, #000 35%);
+    mask-image: linear-gradient(0deg, transparent 0%, transparent 3%, rgb(0 0 0 / 0.25) 9%, rgb(0 0 0 / 0.5) 15%, rgb(0 0 0 / 0.75) 22%, rgb(0 0 0 / 0.92) 29%, #000 35%);
+  }
+  .scene__shade { background: none; }
+}
+.scene__copy {
+  align-items: center;
+  padding-top: 64px;
+}
+.phase {
+  grid-area: 1 / 1;
+  max-width: 36rem;
+  align-self: center;
+}
+.scene__rail {
+  bottom: calc(var(--bars) + 24px);
+}
+@media (max-width: 767px) {
+  .scene__copy {
+    align-items: end;
+    /* alttaki sabit arama çubuğu + aşama çizelgesi + Safari çubuğu payı */
+    padding-bottom: calc(var(--bars) + 150px);
+  }
+  .phase { align-self: end; }
+  .scene__rail { bottom: calc(var(--bars) + 92px); }
+}
+@keyframes drip {
+  0% { transform: scaleY(0); opacity: 1; }
+  60% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+.scroll-drip {
+  transform-origin: top;
+  animation: drip 1.8s var(--ease-out-soft) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-drip { animation: none !important; }
+}
+
+/* ---------- Galeri görüntüleyici ---------- */
+.lightbox[open] { animation: fade-in 0.25s var(--ease-out-soft); }
+.lightbox::backdrop { animation: fade-in 0.25s var(--ease-out-soft); }
+/* Fotoğraf geçişi: gidiş yönünden kayarak gelir (--from: ±40px) */
+.lightbox__img { animation: lb-in 0.45s var(--ease-out-soft) both; }
+@keyframes lb-in {
+  from { opacity: 0; transform: translateX(var(--from, 0)) scale(0.985); }
+}
