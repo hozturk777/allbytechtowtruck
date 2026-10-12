@@ -138,11 +138,11 @@ export function HeroScene() {
               {site.city} merkezde ortalama {site.avgArrivalMinutes} dakikada yanınızdayız. Arayın ya da konumunuzu
               gönderin; gerisini biz halledelim.
             </p>
-            <div className="mt-5 grid max-w-md gap-3 sm:mt-6">
+            {/* Telefonda butonlar yok: arama ve WhatsApp alttaki sabit çubukta */}
+            <div className="mt-6 grid max-w-md gap-3 max-md:hidden">
               <CallButton />
               <div className="grid gap-3 sm:grid-cols-2">
-                {/* Mobilde WhatsApp zaten alttaki sabit çubukta */}
-                <WhatsAppButton size="md" className="max-sm:hidden">
+                <WhatsAppButton size="md">
                   <span className="whitespace-nowrap">WhatsApp</span>
                 </WhatsAppButton>
                 <ShareLocationButton label="Konumumu gönder" />
@@ -178,7 +178,7 @@ export function HeroScene() {
                 ),
               )}
             </ul>
-            <div className="mt-6 max-w-md max-sm:hidden">
+            <div className="mt-6 max-w-md max-md:hidden">
               <CallButton />
             </div>
           </m.div>
